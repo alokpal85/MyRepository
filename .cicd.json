@@ -20,37 +20,37 @@
       "enabled": true,
       "command": "mvn -B clean install -DskipTests",
       "working_directory": ".",
-      "continue_on_error": true
+      "continue_on_error": false
     },
     "test": {
       "enabled": true,
       "command": "mvn -B test",
       "working_directory": ".",
-      "continue_on_error": true
+      "continue_on_error": false
     },
     "build": {
       "enabled": true,
       "command": "mvn -B package",
       "working_directory": ".",
-      "continue_on_error": true
+      "continue_on_error": false
     },
     "run": {
       "enabled": false,
       "command": "mvn spring-boot:run",
       "working_directory": ".",
-      "continue_on_error": true
+      "continue_on_error": false
     },
     "package": {
       "enabled": false,
       "command": "mvn -B package",
       "working_directory": ".",
-      "continue_on_error": true
+      "continue_on_error": false
     },
     "deploy": {
       "enabled": false,
       "command": "",
       "working_directory": ".",
-      "continue_on_error": true
+      "continue_on_error": false
     }
   }
 }
