@@ -1,0 +1,17 @@
+{
+  "project": "hello-springboot-api",
+  "language": "java",
+  "branch": "local/test",
+  "build_tag": "hello-springboot-api-local-test-1",
+  "config_path": "C:\\Projects\\AI\\hello-springboot-api\\.cicd.json",
+  "stages": [
+    {
+      "name": "install",
+      "status": "failed",
+      "command": "mvn -B clean install -DskipTests",
+      "working_directory": ".",
+      "exit_code": 1
+    }
+  ],
+  "overall_status": "failed"
+}
