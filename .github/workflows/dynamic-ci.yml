@@ -1,0 +1,82 @@
+name: Dynamic Config CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+
+jobs:
+  dynamic:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run dynamic pipeline
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          def slugify(value: str) -> str:
+              cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower())
+              cleaned = re.sub(r"-{2,}", "-", cleaned)
+              return cleaned.strip("-") or "unknown"
+
+          config_path = Path(".cicd.json").resolve()
+          config = json.loads(config_path.read_text(encoding="utf-8"))
+          project = config.get("project", {})
+          project_name = project.get("name", config_path.parent.name or "app")
+          branch = os.getenv("GITHUB_HEAD_REF") or os.getenv("GITHUB_REF_NAME") or "local"
+          run_number = os.getenv("GITHUB_RUN_NUMBER", "0")
+          branch_slug = slugify(branch)
+          build_tag = f"{slugify(project_name)}-{branch_slug}-{run_number}"
+          env = os.environ.copy()
+          env.update({
+              "PROJECT_NAME": project_name,
+              "PROJECT_LANGUAGE": project.get("language", "unknown"),
+              "BRANCH_NAME": branch,
+              "BRANCH_SLUG": branch_slug,
+              "RUN_NUMBER": str(run_number),
+              "BUILD_TAG": build_tag,
+          })
+          for key, value in config.get("variables", {}).items():
+              env[str(key)] = str(value)
+
+          print(f"project     : {env['PROJECT_NAME']}")
+          print(f"language    : {env['PROJECT_LANGUAGE']}")
+          print(f"branch      : {env['BRANCH_NAME']}")
+          print(f"build tag   : {env['BUILD_TAG']}")
+
+          for stage_name in config.get("stage_order", ["install", "test", "build", "run", "package", "deploy"]):
+              stage = config.get("stages", {}).get(stage_name, {})
+              enabled = bool(stage.get("enabled", False))
+              command = str(stage.get("command", "")).strip()
+              working_directory = str(stage.get("working_directory", ".")).strip() or "."
+              continue_on_error = bool(stage.get("continue_on_error", False))
+              cwd = str((config_path.parent / working_directory).resolve())
+
+              if not enabled:
+                  print(f"[skip:{stage_name}] disabled")
+                  continue
+              if not command:
+                  print(f"[skip:{stage_name}] no command configured")
+                  continue
+
+              print(f"[stage:{stage_name}] {command}")
+              print(f"[cwd:{stage_name}] {cwd}")
+              completed = subprocess.run(command, shell=True, cwd=cwd, env=env)
+              if completed.returncode != 0 and not continue_on_error:
+                  raise SystemExit(completed.returncode)
+          PY

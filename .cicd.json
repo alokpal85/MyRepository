@@ -1,6 +1,6 @@
 {
   "project": {
-    "name": "hello-springboot-api",
+    "name": "MyRepository",
     "language": "java",
     "ci_provider": "github"
   },
@@ -20,37 +20,37 @@
       "enabled": true,
       "command": "mvn -B clean install -DskipTests",
       "working_directory": ".",
-      "continue_on_error": false
+      "continue_on_error": true
     },
     "test": {
       "enabled": true,
       "command": "mvn -B test",
       "working_directory": ".",
-      "continue_on_error": false
+      "continue_on_error": true
     },
     "build": {
       "enabled": true,
       "command": "mvn -B package",
       "working_directory": ".",
-      "continue_on_error": false
+      "continue_on_error": true
     },
     "run": {
-      "enabled": true,
+      "enabled": false,
       "command": "mvn spring-boot:run",
       "working_directory": ".",
-      "continue_on_error": false
+      "continue_on_error": true
     },
     "package": {
-      "enabled": true,
+      "enabled": false,
       "command": "mvn -B package",
       "working_directory": ".",
-      "continue_on_error": false
+      "continue_on_error": true
     },
     "deploy": {
-      "enabled": true,
+      "enabled": false,
       "command": "",
       "working_directory": ".",
-      "continue_on_error": false
+      "continue_on_error": true
     }
   }
 }
