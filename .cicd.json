@@ -52,5 +52,9 @@
       "working_directory": ".",
       "continue_on_error": false
     }
+  },
+  "gitlab": {
+    "runner_type": "linux_docker",
+    "runner_tags": []
   }
 }
