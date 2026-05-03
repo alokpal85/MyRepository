@@ -1,6 +1,6 @@
 {
   "project": {
-    "name": "hello-springboot-api",
+    "name": "MyRepository",
     "language": "java",
     "ci_provider": "github"
   },
@@ -47,7 +47,7 @@
       "continue_on_error": false
     },
     "deploy": {
-      "enabled": true,
+      "enabled": false,
       "command": "",
       "working_directory": ".",
       "continue_on_error": false

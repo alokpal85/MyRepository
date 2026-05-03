@@ -1,0 +1,186 @@
+name: Dynamic Config CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+jobs:
+  config_validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate configured stages
+        shell: bash
+        run: |
+          echo "Configuration looks valid."
+
+  install_job:
+    runs-on: ubuntu-latest
+    needs:
+      - config_validation
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Export configured variables
+        shell: bash
+        run: |
+          echo JAVA_VERSION='17' >> "$GITHUB_ENV"
+      - name: Run install stage
+        shell: bash
+        env:
+          PROJECT_NAME: "MyRepository"
+          PROJECT_LANGUAGE: "java"
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          BRANCH_SLUG=$(echo "$BRANCH_NAME" | tr -cs '[:alnum:]' '-' | sed 's/^-//; s/-$//' | tr '[:upper:]' '[:lower:]')
+          BUILD_TAG="${PROJECT_NAME}-${BRANCH_SLUG}-${RUN_NUMBER}"
+          echo "project     : ${PROJECT_NAME}"
+          echo "language    : ${PROJECT_LANGUAGE}"
+          echo "branch      : ${BRANCH_NAME}"
+          echo "build tag   : ${BUILD_TAG}"
+          echo "[stage:install] mvn -B clean install -DskipTests"
+          cd '.'
+          mvn -B clean install -DskipTests
+
+  test_job:
+    runs-on: ubuntu-latest
+    needs:
+      - install_job
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Export configured variables
+        shell: bash
+        run: |
+          echo JAVA_VERSION='17' >> "$GITHUB_ENV"
+      - name: Run test stage
+        shell: bash
+        env:
+          PROJECT_NAME: "MyRepository"
+          PROJECT_LANGUAGE: "java"
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          BRANCH_SLUG=$(echo "$BRANCH_NAME" | tr -cs '[:alnum:]' '-' | sed 's/^-//; s/-$//' | tr '[:upper:]' '[:lower:]')
+          BUILD_TAG="${PROJECT_NAME}-${BRANCH_SLUG}-${RUN_NUMBER}"
+          echo "project     : ${PROJECT_NAME}"
+          echo "language    : ${PROJECT_LANGUAGE}"
+          echo "branch      : ${BRANCH_NAME}"
+          echo "build tag   : ${BUILD_TAG}"
+          echo "[stage:test] mvn -B test"
+          cd '.'
+          mvn -B test
+
+  build_job:
+    runs-on: ubuntu-latest
+    needs:
+      - test_job
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Export configured variables
+        shell: bash
+        run: |
+          echo JAVA_VERSION='17' >> "$GITHUB_ENV"
+      - name: Run build stage
+        shell: bash
+        env:
+          PROJECT_NAME: "MyRepository"
+          PROJECT_LANGUAGE: "java"
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          BRANCH_SLUG=$(echo "$BRANCH_NAME" | tr -cs '[:alnum:]' '-' | sed 's/^-//; s/-$//' | tr '[:upper:]' '[:lower:]')
+          BUILD_TAG="${PROJECT_NAME}-${BRANCH_SLUG}-${RUN_NUMBER}"
+          echo "project     : ${PROJECT_NAME}"
+          echo "language    : ${PROJECT_LANGUAGE}"
+          echo "branch      : ${BRANCH_NAME}"
+          echo "build tag   : ${BUILD_TAG}"
+          echo "[stage:build] mvn -B package"
+          cd '.'
+          mvn -B package
+
+  run_job:
+    runs-on: ubuntu-latest
+    needs:
+      - build_job
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Export configured variables
+        shell: bash
+        run: |
+          echo JAVA_VERSION='17' >> "$GITHUB_ENV"
+      - name: Run run stage
+        shell: bash
+        env:
+          PROJECT_NAME: "MyRepository"
+          PROJECT_LANGUAGE: "java"
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          BRANCH_SLUG=$(echo "$BRANCH_NAME" | tr -cs '[:alnum:]' '-' | sed 's/^-//; s/-$//' | tr '[:upper:]' '[:lower:]')
+          BUILD_TAG="${PROJECT_NAME}-${BRANCH_SLUG}-${RUN_NUMBER}"
+          echo "project     : ${PROJECT_NAME}"
+          echo "language    : ${PROJECT_LANGUAGE}"
+          echo "branch      : ${BRANCH_NAME}"
+          echo "build tag   : ${BUILD_TAG}"
+          echo "[stage:run] mvn spring-boot:run"
+          cd '.'
+          mvn spring-boot:run
+
+  package_job:
+    runs-on: ubuntu-latest
+    needs:
+      - run_job
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Export configured variables
+        shell: bash
+        run: |
+          echo JAVA_VERSION='17' >> "$GITHUB_ENV"
+      - name: Run package stage
+        shell: bash
+        env:
+          PROJECT_NAME: "MyRepository"
+          PROJECT_LANGUAGE: "java"
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          BRANCH_SLUG=$(echo "$BRANCH_NAME" | tr -cs '[:alnum:]' '-' | sed 's/^-//; s/-$//' | tr '[:upper:]' '[:lower:]')
+          BUILD_TAG="${PROJECT_NAME}-${BRANCH_SLUG}-${RUN_NUMBER}"
+          echo "project     : ${PROJECT_NAME}"
+          echo "language    : ${PROJECT_LANGUAGE}"
+          echo "branch      : ${BRANCH_NAME}"
+          echo "build tag   : ${BUILD_TAG}"
+          echo "[stage:package] mvn -B package"
+          cd '.'
+          mvn -B package
