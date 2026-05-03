@@ -1,37 +1,25 @@
-# Hello Spring Boot API
+# Sample Spring Boot Dynamic
 
-Minimal Spring Boot API with one endpoint:
+This is a plain Spring Boot sample project for testing the Dynamic AI CI/CD Toolkit from scratch.
 
-- `GET /hello`
+## App
 
-Expected response:
+- simple Spring Boot app
+- one context test
+- one HTTP response test
 
-```json
-{
-  "message": "Hello from Spring Boot"
-}
-```
+## Purpose
 
-## Run locally
+This repo intentionally does not include CI/CD files.
 
-If Maven is installed:
+Use it as a target for:
 
-```powershell
-mvn spring-boot:run
-```
+- `onboard_pipeline.py`
+- `prompt_tool.py`
+- `groq_generate_config.py`
 
-If you use Maven wrapper later:
+## Main Files
 
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-Open:
-
-- `http://localhost:8080/hello`
-
-## Test
-
-```powershell
-mvn test
-```
+- `pom.xml`
+- `src/main/java/.../DemoApplication.java`
+- `src/test/java/.../DemoApplicationTests.java`
