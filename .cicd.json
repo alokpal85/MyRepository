@@ -35,13 +35,13 @@
       "continue_on_error": false
     },
     "run": {
-      "enabled": false,
+      "enabled": true,
       "command": "mvn spring-boot:run",
       "working_directory": ".",
       "continue_on_error": false
     },
     "package": {
-      "enabled": false,
+      "enabled": true,
       "command": "mvn -B package",
       "working_directory": ".",
       "continue_on_error": false
