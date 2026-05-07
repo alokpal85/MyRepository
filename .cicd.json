@@ -1,6 +1,6 @@
 {
   "project": {
-    "name": "hello-springboot-api",
+    "name": "MyRepository",
     "language": "java",
     "ci_provider": "github"
   },
@@ -41,16 +41,21 @@
       "continue_on_error": false
     },
     "package": {
-      "enabled": true,
+      "enabled": false,
       "command": "mvn -B package",
       "working_directory": ".",
       "continue_on_error": false
     },
     "deploy": {
-      "enabled": true,
+      "enabled": false,
       "command": "",
       "working_directory": ".",
       "continue_on_error": false
     }
+  },
+  "branch_rules": {},
+  "gitlab": {
+    "runner_type": "linux_docker",
+    "runner_tags": []
   }
 }
