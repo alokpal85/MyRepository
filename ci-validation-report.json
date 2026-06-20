@@ -1,9 +1,9 @@
 {
-  "project": "hello-springboot-api",
+  "project": "MyRepository",
   "language": "java",
   "branch": "local/test",
-  "build_tag": "hello-springboot-api-local-test-1",
-  "config_path": "C:\\Projects\\AI\\hello-springboot-api\\.cicd.json",
+  "build_tag": "myrepository-local-test-1",
+  "config_path": "C:\\Projects\\AI\\MyRepository\\.cicd.json",
   "stages": [
     {
       "name": "install",
